@@ -285,26 +285,40 @@ class NSIDC_nt():
     # give a
     def get_aice(self, dates_u, verbos=False):
         # does dates_u cover one year or more
-        # weekly files
-        dimY = 304
-        dimX = 448
-        d_no = np.shape(dates_u)[0]
-        data = np.empty([d_no, dimX, dimY])
-        for n, d in enumerate(dates_u):
-            # if d>=dt.datetime(2020,11,1):
-            # infile = self.path+d.strftime('/%Y/')+"nt_"+d.strftime('%Y%m%d')+"_f18_nrt_n.bin"
-            # else:
-            if par.HEMI == "north":
-                infile = self.path + d.strftime('/%Y/') + "nt_" + d.strftime('%Y%m%d') + "_f17_v1.1_n.bin"
-            if par.HEMI == "south":
-                infile = self.path + d.strftime('/%Y/') + "nt_" + d.strftime('%Y%m%d') + "_f17_v1.1_s.bin"
-            with open(infile, 'rb') as fr:
-                hdr = fr.read(300)
-                ice = np.fromfile(fr, dtype=np.uint8)
+        # daily files
+        changed_names = ["f17", "f08", "f11", "f13", "n07"]  # options for filename
+        if par.HEMI == "north":
+            dimY = 304
+            dimX = 448
+        if par.HEMI == "south":
+            dimY = 316
+            dimX = 332
 
-            ice = ice.reshape(dimX, dimY)
-            ice = np.flipud(ice)
-            data[n] = ice / 250.
+        d_no = np.shape(dates_u)[0]
+        # noinspection PyUnboundLocalVariable
+        data = np.full([d_no, dimX, dimY], np.nan)
+        for n, d in enumerate(dates_u):
+            for name in changed_names:
+                if par.HEMI == "north":
+                    infile = self.path + d.strftime('/%Y/') + d.strftime('/%Y.%m.%d/') + "nt_" + d.strftime(
+                        '%Y%m%d_') + name + "_v1.1_n.bin"
+                    # Example: Masters_project/NSIDC_nt/2011/2011.01.01/nt_20110101_f17_v1.1_n.bin
+                if par.HEMI == "south":
+                    infile = self.path + d.strftime('/%Y/') + d.strftime('/%Y.%m.%d/') + "nt_" + d.strftime(
+                        '%Y%m%d_') + name + "_v1.1_s.bin"
+                # noinspection PyUnboundLocalVariable
+                if exists(infile):
+                    with open(infile, 'rb') as fr:
+                        hdr = fr.read(300)
+                        ice = np.fromfile(fr, dtype=np.uint8)
+
+                    ice = ice.reshape(dimX, dimY)
+                    ice = np.flipud(ice)
+                    data[n] = ice / 250.
+                    break
+            else:
+                # TODO: HANDLE THIS
+                print(f"No file found on date {d}")
         data[data > 1.0] = np.nan
         return data
 

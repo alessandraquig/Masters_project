@@ -1,10 +1,12 @@
 import numpy as np
 from sys import path
 
-# path.insert(0, '/Users/H/WAVES/geo_data_group/')
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/')
-import grid_set as gs
 import parameters as par
+path.insert(0, par.path)
+
+# path.insert(0, '/Users/H/WAVES/geo_data_group/')
+# path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/')
+import grid_set as gs
 import Ekman_pumping as ep
 
 

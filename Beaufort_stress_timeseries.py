@@ -6,7 +6,7 @@ import parameters as par
 from sys import path
 import plotting_functions as pf
 
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project')
+path.insert(0, par.path)
 
 # Setting constants
 hemisphere = "north"

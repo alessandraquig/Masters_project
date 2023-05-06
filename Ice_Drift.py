@@ -10,9 +10,9 @@ from sys import path
 from os.path import exists
 from imp import reload
 from netCDF4 import Dataset
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/')
-import grid_set as gs
 import parameters as par
+path.insert(0, par.path)
+import grid_set as gs
 
 
 #### setup plotting grid - Gplot
@@ -108,7 +108,7 @@ class Pathfinder():
 GPathfinder = gs.grid_set(par.m)
 GPathfinder.load_grid(par.ID_grid)
 GPathfinder2Gplot = gs.Gs2Gs(GPathfinder,Gplot,vectors=True)
-DRIFT = Pathfinder('/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/Pathfinder/')
+DRIFT = Pathfinder(f'{par.path}Pathfinder/')
 
 class ID_av():
     """

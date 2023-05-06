@@ -1,18 +1,19 @@
 #Load packages
+import parameters as par
 import numpy as np
 import datetime as dt
 import traceback
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 from sys import path
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/')
+path.insert(0, par.path)
+# path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project/')
 import grid_set as gs
 import Ice_Conc as IC
 import Ice_Drift as ID
 import Ekman_pumping as ep
 import Calculating_pumping as CP
 import data_classes as dc
-import parameters as par
 #%%
 #Define variables
 hemisphere = par.HEMI
@@ -148,7 +149,9 @@ ice_conc_icr = np.ma.zeros((1, len(months), *par.hem_shape))
 #%%
 #ice concentration
 for year_idx, year in enumerate(years):
+    print(f"ICE: year={year}")
     for month_idx, month in enumerate(months):
+        print(f"\tmonth={month}")
         try:
             ic, icr = ic_function_dict[month](year)
             ice_conc_ic[0, month_idx] = ic.squeeze()

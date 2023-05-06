@@ -4,7 +4,7 @@ from pathlib import Path
 
 # path = '/home/aq/Masters_project/'
 path = str(Path("../Masters_project/").resolve()) + "/"
-print(path)
+print(f"par.path = {path}")
 
 HEMI = "north"
 YEARS = np.arange(1979, 2020 + 1)

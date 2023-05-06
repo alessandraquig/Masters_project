@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # import data_classes as dc
 import parameters as par
 from sys import path
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project')
+path.insert(0, par.path)
 
 #Setting constants
 hemisphere = par.HEMI

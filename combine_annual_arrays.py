@@ -9,10 +9,10 @@ import glob
 import pandas as pd
 import traceback
 import importlib
-#import xarrary as xr
+# import xarrary as xr
 from sys import path
 from os.path import exists
-#from imp import reload
+# from imp import reload
 from importlib import reload
 from netCDF4 import Dataset
 # path.insert(0, '/Users/H/WAVES/geo_data_group/')
@@ -20,11 +20,12 @@ from netCDF4 import Dataset
 import grid_set as gs
 import data_classes as dc
 import parameters as par
-#%%
+
+# %%
 hemisphere = "north"
-years = np.arange(1979, 2020+1)
+years = np.arange(1979, 2020 + 1)
 model = "model6"
-months = ["jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"]
+months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 path = par.path
 
 ### GPLOT SET UP
@@ -34,15 +35,15 @@ if hemisphere == "north":
 
     #### setup plotting grid - Gplot
     f = plt.figure()
-    Gplot= gs.grid_set(m)
+    Gplot = gs.grid_set(m)
 
-    ax = f.add_subplot(1,1,1,projection=m)
+    ax = f.add_subplot(1, 1, 1, projection=m)
 
-    #for north
+    # for north
     ax.set_extent([-180, 180, 65, 90], ccrs.PlateCarree())
 
     ### make a new grid
-    Gplot.set_grid_mn(30,30,ax)
+    Gplot.set_grid_mn(30, 30, ax)
     Gplot.get_grid_info(av_ang=False)
     plt.close()
 
@@ -51,29 +52,28 @@ if hemisphere == "south":
 
     #### setup plotting grid - Gplot
     f = plt.figure()
-    Gplot= gs.grid_set(m)
+    Gplot = gs.grid_set(m)
 
-    ax = f.add_subplot(1,1,1,projection=m)
+    ax = f.add_subplot(1, 1, 1, projection=m)
 
-    #for south
+    # for south
     ax.set_extent([-180, 180, -90, -55], ccrs.PlateCarree())
 
     ### make a new grid
-    Gplot.set_grid_mn(30,30,ax)
+    Gplot.set_grid_mn(30, 30, ax)
     Gplot.get_grid_info(av_ang=False)
     plt.close()
-#%%
-#opening files, getting native grids
+# %%
+# opening files, getting native grids
 
-#ice drift
+# ice drift
 DRIFT = dc.Pathfinder(f'{path}Pathfinder/')
 
 GPathfinder = gs.grid_set(m)
 GPathfinder.load_grid(par.ID_grid)
-GPathfinder2Gplot = gs.Gs2Gs(GPathfinder,Gplot,vectors=True)
+GPathfinder2Gplot = gs.Gs2Gs(GPathfinder, Gplot, vectors=True)
 
-
-#ice concentration
+# ice concentration
 IConc = dc.NSIDC_nt(f'{path}NSIDC_nt')
 
 GIC = gs.grid_set(m)
@@ -81,10 +81,9 @@ if hemisphere == "north":
     GIC.load_grid(f'{path}NSIDC_gs.npz')
 if hemisphere == "south":
     GIC.load_grid(f'{path}NSIDC_gs_SH.npz')
-GIC2GPathfinder = gs.Gs2Gs(GIC,GPathfinder,vectors=False)
+GIC2GPathfinder = gs.Gs2Gs(GIC, GPathfinder, vectors=False)
 
-
-#geo currents
+# geo currents
 GEO = dc.CPOM_geo(f'{path}CPOM_geo/')
 
 GCPOM = gs.grid_set(m)
@@ -92,40 +91,39 @@ if hemisphere == "north":
     GCPOM.load_grid(f'{path}PS_20km_gs2021.npz')
 if hemisphere == "south":
     GCPOM.load_grid(f'{path}Polar_stereo_50km_SH.npz')
-GCPOM2GPathfinder = gs.Gs2Gs(GCPOM,GPathfinder,vectors=True)
+GCPOM2GPathfinder = gs.Gs2Gs(GCPOM, GPathfinder, vectors=True)
 
-
-#winds
+# winds
 MWinds = dc.ERA5_months(f'{path}ERA5/')
 
 if hemisphere == "north":
     lonE = MWinds.f_nc.variables['longitude'][:].data
     latE = MWinds.f_nc.variables['latitude'][:].data
-    lon,lat = np.meshgrid(lonE,latE)
-    lon[lat<60] = np.nan
-    lat[lat<60] = np.nan
+    lon, lat = np.meshgrid(lonE, latE)
+    lon[lat < 60] = np.nan
+    lat[lat < 60] = np.nan
     GEmonth = gs.grid_set(m)
-    GEmonth.set_grid_lon_lat(lon,lat)
+    GEmonth.set_grid_lon_lat(lon, lat)
     GEmonth.blank_grid_info()
     GEmonth.ang_c[:] = 1.0
 if hemisphere == "south":
     lonE = MWinds.f_nc.variables['longitude'][:].data
     latE = MWinds.f_nc.variables['latitude'][:].data
-    lon,lat = np.meshgrid(lonE,latE)
-    lon[lat>-55] = np.nan
-    lat[lat>-55] = np.nan
+    lon, lat = np.meshgrid(lonE, latE)
+    lon[lat > -55] = np.nan
+    lat[lat > -55] = np.nan
     GEmonth = gs.grid_set(m)
-    GEmonth.set_grid_lon_lat(lon,lat)
+    GEmonth.set_grid_lon_lat(lon, lat)
     GEmonth.blank_grid_info()
     GEmonth.ang_c[:] = 1.0
-GEmonth2GPathfinder = gs.Gs2Gs(GEmonth,GPathfinder,vectors=True,NaN_avoid=True)
+GEmonth2GPathfinder = gs.Gs2Gs(GEmonth, GPathfinder, vectors=True, NaN_avoid=True)
 
-#%% md
+# %% md
 ### MONTHLY AVERAGES
-#%% md
+# %% md
 ##### Loading arrays from saved files
-#%%
-#Making whole drift array
+# %%
+# Making whole drift array
 # iduv_list = []
 # for year_idx, year in enumerate(years):
 #     #if year != 1993 and year != 1994 and year != 1995:
@@ -139,24 +137,24 @@ GEmonth2GPathfinder = gs.Gs2Gs(GEmonth,GPathfinder,vectors=True,NaN_avoid=True)
 #
 # drift = np.concatenate(iduv_list, axis=0)
 # np.save(f"Data_arrays/{hemisphere}/drift_{years[0]}-{years[-1]}.npy", drift)
-#%%
-#Making whole concentration array
+# %%
+# Making whole concentration array
 icr_list = []
 for year_idx, year in enumerate(years):
-    #if year != 1993 and year != 1994 and year != 1995:
+    # if year != 1993 and year != 1994 and year != 1995:
     try:
         icr = np.load(f"Data_arrays/{hemisphere}/ice_conc_icr_{year}.npy")
         icr_list.append(icr)
-    except:
-        print("No data for ",year)
+    except FileNotFoundError as exc:
+        print(f"No data for {year}: {exc}")
         icr_empty = np.zeros((1, 12, len(GPathfinder.xpts), len(GPathfinder.ypts)))
         icr_list.append(icr_empty)
 
 concentration = np.concatenate(icr_list, axis=0)
 np.save(f"Data_arrays/{hemisphere}/conc_{years[0]}-{years[-1]}.npy", concentration)
 # #%%
-#Making whole geostrophic array
-#I've made arrays of zeros for 1979-2010. This allows me to run the code without it crashing, but keep in mind that only models not using geostrophic data work before then
+# Making whole geostrophic array
+# I've made arrays of zeros for 1979-2010. This allows me to run the code without it crashing, but keep in mind that only models not using geostrophic data work before then
 # gcr_list = []
 # for year_idx, year in enumerate(years):
 #     #if year != 1993 and year != 1994 and year != 1995:
@@ -185,7 +183,7 @@ np.save(f"Data_arrays/{hemisphere}/conc_{years[0]}-{years[-1]}.npy", concentrati
 #
 # wind = np.concatenate(windr_list, axis=0)
 # np.save(f"Data_arrays/{hemisphere}/wind_{years[0]}-{years[-1]}.npy", wind)
-#%%
+# %%
 # #Making whole Ekman arrays
 # ek_list = []
 # tau_list = []

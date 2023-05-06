@@ -9,10 +9,10 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from sys import path
 
-path.insert(0, '/Users/hp/OneDrive - University College London/Year 4 UCL/Master\'s project/Masters_project')
+import parameters as par
+path.insert(0, par.path)
 import grid_set as gs
 import data_classes as dc
-import parameters as par
 import plotting_functions as pf
 plt.rcParams['figure.dpi'] = 400
 
