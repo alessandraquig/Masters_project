@@ -1,0 +1,11 @@
+/Annual_data/
+/Data_arrays/
+/ERA5/
+/NSIDC_nt/
+/Pathfinder/
+/CPOM_geo/
+*.png
+*.npy
+*.npz
+.name
+.idea
