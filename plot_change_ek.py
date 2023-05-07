@@ -81,20 +81,24 @@ ur_avg = ek_change[..., 0]
 vr_avg = ek_change[..., 1]
 
 # plot the magnitude of the averaged Ekman current field
-ek_norm = CenteredNorm(halfrange=0.05, vcenter=0)
+ek_norm = CenteredNorm(halfrange=0.04, vcenter=0)
+ek_levels = np.linspace(-0.03, 0.03, num=9)
 fig_ek = plt.figure(figsize=(18, 9))
-fig_ek.suptitle("Change in Average Currents 1980s-2010s")
+fig_ek.suptitle("Change in Average Currents 1980s-2010s", fontsize=15)
 
 arrow_every = 10
 ax_ek: plt.Axes = fig_ek.add_subplot(1, 3, 1, projection=par.m)
 ax_ek.set_extent(bounds, ccrs.PlateCarree())
-img_ek = ax_ek.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change, cmap="PiYG")
+img_ek = ax_ek.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
+                        cmap="PiYG", norm=ek_norm, levels=ek_levels)
 ax_ek.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           ur_avg[::arrow_every, ::arrow_every],
           vr_avg[::arrow_every, ::arrow_every], color="k")
 ax_ek.add_feature(cfeature.COASTLINE)
 ax_ek.set_title("Whole Year Average")
+
+print(f"Max change = {np.nanmax(ek_change)}, min change = {np.nanmin(ek_change)}")
 
 # September sea ice (minimum for Arctic)
 # Plot change in currents (Average for 2010s - average for 1980s)
@@ -109,13 +113,16 @@ vr_avg_sep = ek_change_sep[..., 1]
 
 ax_ek_sep: plt.Axes = fig_ek.add_subplot(1, 3, 2, projection=par.m)
 ax_ek_sep.set_extent(bounds, ccrs.PlateCarree())
-img_ek_sep = ax_ek_sep.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change, cmap="PiYG")
+img_ek_sep = ax_ek_sep.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
+                                cmap="PiYG", norm=ek_norm, levels=ek_levels)
 ax_ek_sep.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
              GPathfinder.ypts[::arrow_every, ::arrow_every],
-             ur_avg[::arrow_every, ::arrow_every],
-             vr_avg[::arrow_every, ::arrow_every], color="k")
+             ur_avg_sep[::arrow_every, ::arrow_every],
+             vr_avg_sep[::arrow_every, ::arrow_every], color="k")
 ax_ek_sep.add_feature(cfeature.COASTLINE)
 ax_ek_sep.set_title("September")
+
+print(f"Max change = {np.nanmax(ek_change_sep)}, min change = {np.nanmin(ek_change_sep)}")
 
 # March sea ice (maximum for Arctic)
 # Plot change in currents (Average for 2010s - average for 1980s)
@@ -130,16 +137,20 @@ vr_avg_mar = ek_change_mar[..., 1]
 
 ax_ek_mar: plt.Axes = fig_ek.add_subplot(1, 3, 3, projection=par.m)
 ax_ek_mar.set_extent(bounds, ccrs.PlateCarree())
-img_ek_mar = ax_ek_mar.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change, cmap="PiYG")
+img_ek_mar = ax_ek_mar.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
+                                cmap="PiYG", norm=ek_norm, levels=ek_levels)
 ax_ek_mar.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
                  GPathfinder.ypts[::arrow_every, ::arrow_every],
-                 ur_avg[::arrow_every, ::arrow_every],
-                 vr_avg[::arrow_every, ::arrow_every], color="k")
+                 ur_avg_mar[::arrow_every, ::arrow_every],
+                 vr_avg_mar[::arrow_every, ::arrow_every], color="k")
 ax_ek_mar.add_feature(cfeature.COASTLINE)
 ax_ek_mar.set_title("March")
 
-fig_ek.colorbar(img_ek, ax=[ax_ek, ax_ek_sep, ax_ek_mar], orientation="vertical",
+print(f"Max change = {np.nanmax(ek_change_mar)}, min change = {np.nanmin(ek_change_mar)}")
+
+fig_ek.colorbar(img_ek, ax=[ax_ek, ax_ek_sep, ax_ek_mar], orientation="horizontal",
                 pad=0.05, aspect=25, norm=ek_norm)
+fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
 fig_ek.savefig(f"Maps_output/{hemisphere}/{model}/Currents_change_seasons.png")
 
 ek_comp = ek_change_mar - ek_change_sep

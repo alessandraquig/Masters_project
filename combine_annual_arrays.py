@@ -22,7 +22,7 @@ import data_classes as dc
 import parameters as par
 
 # %%
-hemisphere = "north"
+hemisphere = par.HEMI
 years = np.arange(1979, 2020 + 1)
 model = "model6"
 months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]

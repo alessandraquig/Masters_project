@@ -64,7 +64,7 @@ time_ax: plt.Axes
 time_ax.plot(years_ad, pump1_flat, label="With Geostrophic", c='C0')
 time_ax.plot(years_ad, pump7_flat, label="Without Geostrophic", c='C1')
 
-time_ax.set_title("Ekman Pumping Over Time")
+time_ax.set_title("Ekman Pumping Over Time", fontsize=15)
 
 time_ax.xaxis.set_major_locator(MultipleLocator(5))
 time_ax.xaxis.set_minor_locator(MultipleLocator(1))

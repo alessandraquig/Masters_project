@@ -88,7 +88,7 @@ pump_change_mar = pf.mask_data(pump_change_mar)
 
 pump_norm = CenteredNorm(halfrange=25, vcenter=0)
 fig_pump = plt.figure(figsize=(18, 9))
-fig_pump.suptitle("Change in Average Pumping 1980s-2010s")
+fig_pump.suptitle("Change in Average Pumping 1980s-2010s", fontsize=15)
 ax_pump, img_pump = pf.colorplot(data=pump_change, fig=fig_pump, rows=1, cols=3, pos=1, title="Whole Year", norm=pump_norm)
 ax_pump_sep, _ = pf.colorplot(data=pump_change_sep, fig=fig_pump, rows=1, cols=3, pos=2, title="September", norm=pump_norm)
 ax_pump_mar, _ = pf.colorplot(data=pump_change_mar, fig=fig_pump, rows=1, cols=3, pos=3, title="March", norm=pump_norm)

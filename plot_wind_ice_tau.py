@@ -70,37 +70,70 @@ wind_avg = pf.get_average(wind, 1979, plot_years)
 conc_avg = pf.get_average(conc, 1979, plot_years)
 tau_avg = pf.get_average(tau[...,0], 1979, plot_years)
 taui_avg = pf.get_average(tau[...,2], 1979, plot_years)
-taua_avg = pf.get_average(tau[...,1], 1979, plot_years)
+taua_avg = pf.mask_data(pf.get_average(tau[...,1], 1979, plot_years))
 
-# Winter
-wind_avg_jas = pf.get_average(wind, 1979, years, ["jul", "aug", "sep"])
-conc_avg_jas = pf.get_average(conc, 1979, years, ["jul", "aug", "sep"])
+# March
+conc_avg_mar = pf.get_average(conc, 1979, plot_years, months=["mar"])
+tau_avg_mar = pf.get_average(tau[...,0], 1979, plot_years, months=["mar"])
+taui_avg_mar = pf.get_average(tau[...,2], 1979, plot_years, months=["mar"])
+taua_avg_mar = pf.mask_data(pf.get_average(tau[...,1], 1979, plot_years, months=["mar"]))
 
-# Summer
-wind_avg_jfm = pf.get_average(wind, 1979, years, ["jan", "feb", "mar"])
-conc_avg_jfm = pf.get_average(conc, 1979, years, ["jan", "feb", "mar"])
-
+#September
+conc_avg_sep = pf.get_average(conc, 1979, plot_years, months=["sep"])
+tau_avg_sep = pf.get_average(tau[...,0], 1979, plot_years, months=["sep"])
+taui_avg_sep = pf.get_average(tau[...,2], 1979, plot_years, months=["sep"])
+taua_avg_sep = pf.mask_data(pf.get_average(tau[...,1], 1979, plot_years, months=["sep"]))
 
 #Plotting
 fig_stress: plt.Figure = plt.figure(figsize=(10, 5))
 fig_stress.suptitle("Wind and Ice Stress over Time", fontsize=15)
-
-# norm=CenteredNorm(halfrange=100, vcenter=0)
 arrow_every = 10
+
+# Whole year
 ax_conc, img_conc = pf.colorplot(conc_avg, fig_stress, "Total", 1, 3, 1, cmap="Blues")
 taua_u, taua_v = taua_avg[..., 0], taua_avg[..., 1]
-ax_taua = ax.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+ax_taua = ax_conc.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           taua_u[::arrow_every, ::arrow_every],
           taua_v[::arrow_every, ::arrow_every], color="r")
 
 taui_u, taui_v = taui_avg[..., 0], taui_avg[..., 1]
-ax_taui = ax.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+ax_taui = ax_conc.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           taui_u[::arrow_every, ::arrow_every],
           taui_v[::arrow_every, ::arrow_every], color="k")
 
+# March
+ax_conc_mar, img_conc_mar = pf.colorplot(conc_avg_mar, fig_stress, "March", 1, 3, 2, cmap="Blues")
+taua_u_mar, taua_v_mar = taua_avg_mar[..., 0], taua_avg_mar[..., 1]
+ax_taua_mar = ax_conc_mar.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+                         GPathfinder.ypts[::arrow_every, ::arrow_every],
+                         taua_u_mar[::arrow_every, ::arrow_every],
+                         taua_v_mar[::arrow_every, ::arrow_every], color="r")
 
-fig_stress.colorbar
+taui_u_mar, taui_v_mar = taui_avg_mar[..., 0], taui_avg_mar[..., 1]
+ax_taui_mar = ax_conc_mar.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+                         GPathfinder.ypts[::arrow_every, ::arrow_every],
+                         taui_u_mar[::arrow_every, ::arrow_every],
+                         taui_v_mar[::arrow_every, ::arrow_every], color="k")
 
-fig_stress.savefig(f"Maps_output/{hemisphere}/Ice_and_wind_stress.png")
+# September
+ax_conc_sep, img_conc_sep = pf.colorplot(conc_avg_sep, fig_stress, "September", 1, 3, 3, cmap="Blues")
+taua_u_sep, taua_v_sep = taua_avg_sep[..., 0], taua_avg_sep[..., 1]
+ax_taua_sep = ax_conc_sep.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+                                 GPathfinder.ypts[::arrow_every, ::arrow_every],
+                                 taua_u_sep[::arrow_every, ::arrow_every],
+                                 taua_v_sep[::arrow_every, ::arrow_every], color="r")
+
+taui_u_sep, taui_v_sep = taui_avg_sep[..., 0], taui_avg_sep[..., 1]
+ax_taui_sep = ax_conc_sep.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+                                 GPathfinder.ypts[::arrow_every, ::arrow_every],
+                                 taui_u_sep[::arrow_every, ::arrow_every],
+                                 taui_v_sep[::arrow_every, ::arrow_every], color="k")
+
+
+fig_stress.colorbar(img_conc, ax=[ax_conc, ax_conc_mar, ax_conc_sep], orientation="horizontal",
+                pad=0.05, aspect=25)
+fig_stress.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+
+fig_stress.savefig(f"Maps_output/{hemisphere}/Ice_and_wind_stress_seasons.png")
