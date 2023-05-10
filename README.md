@@ -1,62 +1,50 @@
 # Masters_project
 The aim is to create plots of surface currents, Ekman pumping, and stress.
 
-Step 1 (assuming you have all the data - see the bottom of this document if that's not the case): Create raw data arrays.
 
-Change the parameters you want (years, months, hemisphere) in parameters.py. Every other file gets values from this script.
-Run write_to_arrays.py create arrays for each variable by latitude and longitude.
-The values will be monthly averages, and each array represents one year of data.
-Run combine_annual_arrays.py to combine these annual arrays into arrays spanning the whole desired time period.
+## Step 1 (assuming you have all the data - see the bottom of this document if that's not the case): Create raw data arrays.
+- Change the parameters you want (years, months, hemisphere) in parameters.py. Every other file gets values from this script.
+- Run write_to_arrays.py create arrays for each variable by latitude and longitude. The values will be monthly averages, and each array represents one year of data.
+- Run combine_annual_arrays.py to combine these annual arrays into arrays spanning the whole desired time period.
 You should now have one array each for geo, drift, conc, and wind.
 
+## Step 2: Calculate surface currents, pumping, and stress from your data arrays.
+- Run write_to_Ekman_arrays.py to get a single array for your time period for each model of stress (tau), Ekman currents (ekman), and pumping (pump).
 
-Step 2: Calculate surface currents, pumping, and stress from your data arrays.
+### These are the models (all models besides 2 use turning angle of 45 degrees):
+- 	Model 1 - all data (2011-2020) (based on Meneghello et al. 2018)
+-	Model 2 - all data, turning angle of 90 degrees (2011-2020) (based on Yang 2006)
+-	Model 3 - wind only: sets ice concentration and geostrophic = 0 (1979-2020)
+-	Model 4 - ice-free: sets ice concentration to 0 (2011-2020)
+-	Model 5 - wind-free: sets wind to 0 (2011-2020)
+-	Model 6 - ocean only: sets wind and ice concentration to 0 (2011-2020)
+-	Model 7 - no geostrophic: sets geo to 0 (1979-2011)
 
-Run write_to_Ekman_arrays.py to get a single array for your time period for each model of stress (tau), Ekman currents (ekman), and pumping (pump).
-These are the models (all models besides 2 use turning angle of 45 degrees):
-Model 1 - all data (2011-2020) (based on Meneghello et al. 2018)
-Model 2 - all data, turning angle of 90 degrees (2011-2020) (based on Yang 2006)
-Model 3 - wind only: sets ice concentration and geostrophic = 0 (1979-2020)
-Model 4 - ice-free: sets ice concentration to 0 (2011-2020)
-Model 5 - wind-free: sets wind to 0 (2011-2020)
-Model 6 - ocean only: sets wind and ice concentration to 0 (2011-2020)
-Model 7 - no geostrophic: sets geo to 0 (1979-2011)
-
-
-Step 3: Plot stuff.
-
+## Step 3: Plot stuff.
 Make sure plotting_functions.py is imported as pf. Almost all other plotting scripts call it.
+- Beaufort_stress_timeseries.py plots wind, ice, and total stress and ice concentration over time. I have it set to use model 7 for 1979-2020.
+- plot_avg_maps.py plots figures where the subplots are seasonal averages for each decade. - I have seasons defined as JFM, AMJ, JAS, OND.
+plot_change_ek.py takes the average Ekman currents in the 2010s and subtracts it from the 1980s average, then plots that difference. It has subplots for March and September to see ice min and max.
+- plot_change_pump.py and plot_change_wind.py are the same as plot_change_ek.py but for pumping and wind.
+- plot_maps.py plots whatever variable you want for a given month and year. It's currently set to loop through everything, so run it overnight to wake up to a bunch of maps.
+- plot_maps_decades.py does the same thing as plot_avg_maps.py, but the subplots in the former are separate figures in this one.
+- plot_pump_timeseries.py plots a timeseries of Ekman pumping with and without geostrophy.
+- plot_timescale.py plots a timeseries of ice concentration, drift speed, and wind speed.
+- plot_wind_ice_stress.py is the same as Beaufort_stress_timeseries.py but for a whole grid, not a specific area.
+- plot_wind_ice_tau.py plots seasonal subplots of wind and ice stress.
 
-Beaufort_stress_timeseries.py plots wind, ice, and total stress and ice concentration over time.
-I have it set to use model 7 for 1979-2020.
-plot_avg_maps.py plots figures where the subplots are seasonal averages for each decade.
-I have seasons defined as JFM, AMJ, JAS, OND.
-plot_change_ek.py takes the average Ekman currents in the 2010s and subtracts it from the 1980s average, then plots that difference.
-It has subplots for March and September to see ice min and max.
-plot_change_pump.py and plot_change_wind.py are the same as plot_change_ek.py but for pumping and wind.
-plot_maps.py plots whatever variable you want for a given month and year.
-It's currently set to loop through everything, so run it overnight to wake up to a bunch of maps.
-plot_maps_decades.py does the same thing as plot_avg_maps.py, but the subplots in the former are separate figures in this one.
-plot_pump_timeseries.py plots a timeseries of Ekman pumping with and without geostrophy.
-plot_timescale.py plots a timeseries of ice concentration, drift speed, and wind speed.
-plot_wind_ice_stress.py is the same as Beaufort_stress_timeseries.py but for a whole grid, not a specific area.
-plot_wind_ice_tau.py plots seasonal subplots of wind and ice stress.
-
-
-
-
-	I also inherited these files and changed them minimally:
-grid_set.py
-Ice_Conc.py
-Ice_Drift.py
-data_classes.py (I technically made this by cobbling together classes that were called repeatedly,
+I also inherited these files and changed them minimally:
+- grid_set.py
+- Ice_Conc.py
+- Ice_Drift.py
+- data_classes.py (I technically made this by cobbling together classes that were called repeatedly,
 but I didn't really edit the classes.)
 
 I modified these files only enough to have them intake parameters from parameters.py,
 so you shouldn't have to deal with any of these to run anything.
 
-Below this is the important bits from the README of the Github folder I inherited.
-https://github.com/owylie/MSci-Project-Ekman-Dynamics
+Below this are the important bits from the README of the [Github folder I inherited](https://github.com/owylie/MSci-Project-Ekman-Dynamics).
+
 
 All the files in this repository should be downloaded in the same folder,
 and as well as this the following data sets need to be downloaded (they're too large to upload here),
