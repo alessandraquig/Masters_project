@@ -6,7 +6,7 @@ from pathlib import Path
 path = str(Path("../Masters_project/").resolve()) + "/"
 print(f"par.path = {path}")
 
-HEMI = "south"
+HEMI = "north"
 YEARS = np.arange(1979, 2020 + 1)
 MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 MODEL = "model7"

@@ -40,9 +40,10 @@ GPathfinder2Gplot = gs.Gs2Gs(GPathfinder, Gplot, vectors=True)
 
 ##### Loading arrays from saved files
 ek_all = np.load(f"Data_arrays/{hemisphere}/model1/ekman_2011-2020.npy")
-ek_geo = np.load(f"Data_arrays/{hemisphere}/model6/ekman_2011-2020.npy")
+# ek_geo = np.load(f"Data_arrays/{hemisphere}/model6/ekman_2011-2020.npy")
 ek_wind_ice = np.load(f"Data_arrays/{hemisphere}/model7/ekman_1979-2020.npy")
 geo = np.load(f"Data_arrays/{hemisphere}/geo_1979-2020.npy")
+total = ek_all[..., 0] + geo[-10:, ...]
 
 # ek_all = pf.mask_data(ek_all)
 # ek_geo = pf.mask_data(ek_geo)
@@ -51,10 +52,10 @@ geo = np.load(f"Data_arrays/{hemisphere}/geo_1979-2020.npy")
 
 # Getting averages over 2011-2020
 ek_all_avg = pf.mask_data(pf.get_average(ek_all[..., 0], 2011, years=years))
-ek_geo_avg = pf.mask_data(pf.get_average(ek_geo[..., 0], 2011, years=years))
+# ek_geo_avg = pf.mask_data(pf.get_average(ek_geo[..., 0], 2011, years=years))
 ek_wind_ice_avg = pf.mask_data(pf.get_average(ek_wind_ice[..., 0], 1979, years=years))
 geo_avg = pf.mask_data(pf.get_average(geo, 1979, years=years))
-
+total_avg = pf.mask_data(pf.get_average(total, 2011, years=years))
 
 jfm = ["jan", "feb", "mar"]
 amj = ["apr", "may", "jun"]
@@ -67,13 +68,14 @@ fig_ek.suptitle("Surface Currents 2011-2020 Mean", fontsize=15)
 
 #
 # TODO: give them all the same norm
-v_max = max(np.max(ek_all_avg), np.max(geo_avg), np.max(ek_wind_ice_avg))
+v_max = max(np.max(ek_all_avg), np.max(geo_avg), np.max(ek_wind_ice_avg), np.max(total_avg))
 norm = Normalize(vmin=0, vmax=v_max)
-ax_total, img_total = pf.vectorplot(ek_all_avg, fig_ek, "Total", 1, 3, 1, cmap="viridis", norm=norm)
-ax_wind_ice, _ = pf.vectorplot(ek_wind_ice_avg, fig_ek, "Wind and Ice", 1, 3, 2, cmap="viridis", norm=norm)
-ax_geo, _ = pf.vectorplot(geo_avg, fig_ek, "Geostrophic", 1, 3, 3, cmap="viridis", norm=norm)
+ax_total, img_total = pf.vectorplot(total_avg, fig_ek, "Total", 1, 4, 1, cmap="viridis", norm=norm)
+ax_ek, _ = pf.vectorplot(ek_all_avg, fig_ek, "Ekman", 1, 4, 2, cmap="viridis", norm=norm)
+ax_wind_ice, _ = pf.vectorplot(ek_wind_ice_avg, fig_ek, "Ekman (No Geostrophic)", 1, 4, 3, cmap="viridis", norm=norm)
+ax_geo, _ = pf.vectorplot(geo_avg, fig_ek, "Geostrophic", 1, 4, 4, cmap="viridis", norm=norm)
 
-fig_ek.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_geo], orientation="horizontal",
+fig_ek.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_geo, ax_ek], orientation="horizontal",
                 pad=0.05, aspect=25)
 
 fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
@@ -81,5 +83,5 @@ fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25
 
 #Are all of the subplots using the same colorbar, or have I only printed it for one?
 
-fig_ek.savefig(f"Maps_output/{hemisphere}/Surface_Ek_Geo_2011-2020.png")
+fig_ek.savefig(f"Maps_output/{hemisphere}/compare_ek_models.png")
 #fig_pump.savefig(f"Maps_output/{hemisphere}/{model}/Pump_Geo_2011-2020.png")
