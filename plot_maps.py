@@ -66,6 +66,7 @@ for year_idx, year in enumerate(years):
         conc = pf.mask_data(pf.get_average(conc_data, 1979, years=[year], months=[month]))
         geo = pf.mask_data(pf.get_average(geo_data, 1979, years=[year], months=[month]))
         drift = pf.mask_data(pf.get_average(drift_data, 1979, years=[year], months=[month]))
+        print(np.shape(wind))
 
         # Wind
         fig_wind = plt.figure(figsize=(10, 10))
@@ -73,7 +74,7 @@ for year_idx, year in enumerate(years):
         ax_wind, img_wind = pf.vectorplot(wind, fig_wind,
                                           title=f"{month.capitalize()} {year}", rows=1,
                                           cols=1, pos=1, cmap="viridis", arrow_every=10, norm=None)
-        fig_wind.colorbar(img_wind, ax_wind)
+        fig_wind.colorbar(img_wind, ax=ax_wind)
         plt.savefig(f"Maps_output/{hemisphere}/Wind/Wind_{year}-{month_num}.png")
         plt.close()
 
@@ -83,7 +84,7 @@ for year_idx, year in enumerate(years):
         ax_drift, img_drift = pf.vectorplot(drift, fig_drift,
                                           title=f"{month.capitalize()} {year}", rows=1,
                                           cols=1, pos=1, cmap="viridis", arrow_every=10, norm=None)
-        fig_drift.colorbar(img_drift, ax_drift)
+        fig_drift.colorbar(img_drift, ax=ax_drift)
         plt.savefig(f"Maps_output/{hemisphere}/Drift/Drift_{year}-{month_num}.png")
         plt.close()
 
@@ -93,7 +94,7 @@ for year_idx, year in enumerate(years):
         ax_conc, img_conc = pf.colorplot(conc, fig_conc,
                                       title=f"{month.capitalize()} {year}", rows=1,
                                       cols=1, pos=1, cmap="seismic", norm=None)
-        fig_conc.colorbar(img_conc, ax_conc)
+        fig_conc.colorbar(img_conc, ax=ax_conc)
         fig_conc.savefig(f"Maps_output/{hemisphere}/Conc/Conc_{year}-{month_num}.png")
         plt.close()
 
@@ -103,7 +104,7 @@ for year_idx, year in enumerate(years):
         ax_geo, img_geo = pf.vectorplot(geo, fig_geo,
                                           title=f"{month.capitalize()} {year}", rows=1,
                                           cols=1, pos=1, cmap="viridis", arrow_every=10, norm=None)
-        fig_geo.colorbar(img_geo, ax_geo)
+        fig_geo.colorbar(img_geo, ax=ax_geo)
         plt.savefig(f"Maps_output/{hemisphere}/Geo/Geo_{year}-{month_num}.png")
         plt.close()
 
@@ -137,7 +138,7 @@ for year_idx, year in enumerate(years):
             ax_pump, img_pump = pf.colorplot(pump[..., 3], fig_pump,
                                       title=f"{month.capitalize()} {year}", rows=1,
                                       cols=1, pos=1, cmap="seismic", norm=None)
-            fig_pump.colorbar(img_pump, ax_pump)
+            fig_pump.colorbar(img_pump, ax=ax_pump)
             plt.savefig(f"Maps_output/{hemisphere}/{model}/Ekman_Pumping_{year}-{month_num}.png")
             plt.close()
 
@@ -147,6 +148,6 @@ for year_idx, year in enumerate(years):
             ax_ek, img_ek = pf.vectorplot(ekman[..., 0], fig_ek,
                                         title=f"{month.capitalize()} {year}", rows=1,
                                         cols=1, pos=1, cmap="viridis", arrow_every=10, norm=None)
-            fig_ek.colorbar(img_ek, ax_ek)
+            fig_ek.colorbar(img_ek, ax=ax_ek)
             plt.savefig(f"Maps_output/{hemisphere}/{model}/Ekman_Currents_{year}-{month_num}.png")
             plt.close()

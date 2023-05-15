@@ -5,6 +5,12 @@ import matplotlib.pyplot as plt
 import parameters as par
 from sys import path
 import plotting_functions as pf
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
+plt.rcParams["legend.loc"] = "upper left"
 
 path.insert(0, par.path)
 
@@ -96,7 +102,7 @@ p2, = time_ax.plot(years_ad, tau_a_flat, label=fr"Wind Stress", c='C2')
 p3, = time_ax.plot(years_ad, tau_i_flat, label=r"Ice Stress", c='C3')
 # p4, = time_ax.plot(years_ad[-10 * 12:], geo_flat[-10 * 12:], label="Geostrophic Currents", c='C3')
 
-time_ax.set_title("Wind, Ice, and Total Stress and Ice Concentration Over Time")
+time_ax.set_title("Wind, Ice, and Total Stress and Ice Concentration Over Time", fontsize=15)
 
 time_ax.xaxis.set_major_locator(MultipleLocator(5))
 time_ax.xaxis.set_minor_locator(MultipleLocator(1))
@@ -108,7 +114,7 @@ time_ax.set_ylim(bottom=0)
 # wind_ax.yaxis.label.set_color(p3.get_color())
 # wind_ax.set_ylim(bottom=0)
 
-conc_ax.set_ylabel("Ice concentration (%)")
+conc_ax.set_ylabel("Ice concentration (\%)")
 # wind_ax.yaxis.label.set_color(p3.get_color())
 conc_ax.set_ylim(bottom=0)
 

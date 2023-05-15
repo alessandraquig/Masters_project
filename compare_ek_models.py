@@ -15,6 +15,11 @@ import grid_set as gs
 import data_classes as dc
 import plotting_functions as pf
 plt.rcParams['figure.dpi'] = 400
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 
 hemisphere = par.HEMI
 years = np.arange(2011, 2020+1)
@@ -43,6 +48,9 @@ ek_all = np.load(f"Data_arrays/{hemisphere}/model1/ekman_2011-2020.npy")
 # ek_geo = np.load(f"Data_arrays/{hemisphere}/model6/ekman_2011-2020.npy")
 ek_wind_ice = np.load(f"Data_arrays/{hemisphere}/model7/ekman_1979-2020.npy")
 geo = np.load(f"Data_arrays/{hemisphere}/geo_1979-2020.npy")
+if hemisphere == "south":
+    geo[..., 0] *= -1
+    geo[..., 1] *= -1
 total = ek_all[..., 0] + geo[-10:, ...]
 
 # ek_all = pf.mask_data(ek_all)
@@ -63,8 +71,8 @@ jas = ["jul", "aug", "sep"]
 ond = ["oct", "nov", "dec"]
 seasons = [jfm, amj, jas, ond]
 
-fig_ek: plt.Figure = plt.figure(figsize=(10, 5))
-fig_ek.suptitle("Surface Currents 2011-2020 Mean", fontsize=15)
+fig_ek: plt.Figure = plt.figure(figsize=(9, 4))
+fig_ek.suptitle("Mean Surface Currents 2011-2020", fontsize=15)
 
 #
 # TODO: give them all the same norm
@@ -75,10 +83,11 @@ ax_ek, _ = pf.vectorplot(ek_all_avg, fig_ek, "Ekman", 1, 4, 2, cmap="viridis", n
 ax_wind_ice, _ = pf.vectorplot(ek_wind_ice_avg, fig_ek, "Ekman (No Geostrophic)", 1, 4, 3, cmap="viridis", norm=norm)
 ax_geo, _ = pf.vectorplot(geo_avg, fig_ek, "Geostrophic", 1, 4, 4, cmap="viridis", norm=norm)
 
-fig_ek.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_geo, ax_ek], orientation="horizontal",
+cbar = fig_ek.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_geo, ax_ek], orientation="horizontal",
                 pad=0.05, aspect=25)
+cbar.set_label("Currents (m$^{3}$ s$^{-1}$)")
 
-fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.9, bottom=0.3)
 
 
 #Are all of the subplots using the same colorbar, or have I only printed it for one?

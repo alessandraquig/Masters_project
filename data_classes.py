@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import datetime as dt
 import struct
@@ -386,10 +388,16 @@ class CPOM_geo():
     # next function will take a list of dates and return an appropriately orientated arrays
     # give a 
     def get_vels(self, dates_u, verbos=False):
-        d0 = dt.datetime(2000, 1, 1)
+        # d0 = dt.datetime(2000, 1, 1)  # this isn't doing anything.
         ### find the indices
-        idx = [np.argwhere(np.array([d == du for d in self.dates_all]))[0, 0]
-               for du in dates_u]
+        try:
+            idx = [np.argwhere(np.array([d == du for d in self.dates_all]))[0, 0]
+                   for du in dates_u]
+        except IndexError:
+            warnings.warn(RuntimeWarning(f"One of dates {dates_u} not found in data."))
+            datau = np.full_like(self.f_nc.variables['Geo_surf_current_x'][0], np.nan)
+            datav = np.full_like(self.f_nc.variables['Geo_surf_current_x'][0], np.nan)
+            return datau, datav
         ### little bit of checking
         if verbos:
             for i, du in zip(idx, dates_u):
@@ -397,6 +405,11 @@ class CPOM_geo():
                 dcheck = dcheck + relativedelta(days=self.time_vec[i])
                 dcheck = dcheck + relativedelta(years=-1)
                 print(du.strftime('%Y%m%d-') + dcheck.strftime('%Y%m%d'))
+        # if par.HEMI == "north":
         datau = self.f_nc.variables['Geo_surf_current_x'][idx]
         datav = -self.f_nc.variables['Geo_surf_current_y'][idx]
+        # elif par.HEMI == "south":
+        #     datau = self.f_nc.variables['Geo_surf_current_y'][idx]
+        #     datav = self.f_nc.variables['Geo_surf_current_x'][idx]
+        #
         return datau, datav

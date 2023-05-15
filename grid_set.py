@@ -25,6 +25,7 @@ class grid_set:
 
     def __init__(self, mplot):
         #         print(type(mplot))
+        # if isinstance(mplot, ccrs.CRS):
         if 'crs' in str(type(mplot)):
 
             ### need lon/lat to x,y
@@ -63,6 +64,7 @@ class grid_set:
         self.data = False
 
     def reproject(self, mplot):
+        # if isinstance(mplot, ccrs.CRS):
         if 'crs' in str(type(mplot)):
 
             ### need lon/lat to x,y
@@ -1425,6 +1427,8 @@ class Gs2Gs:
             self.new_mplot = gs_new.mplot
             self.new_lons = gs_new.lons
             self.new_lats = gs_new.lats
+            self.new_rotate_vector = gs_new.rotate_vector
+            # self.new_rotate_vector = gs_new.mplot
         if vectors_plot:
             # record the neccesary angles to de-rotate the input vectors 
             # and re-rotate the output vectors
@@ -1433,6 +1437,9 @@ class Gs2Gs:
             self.new_mplot = gs_new.mplot
             self.new_lons = gs_new.lons
             self.new_lats = gs_new.lats
+            self.new_rotate_vector = gs_new.rotate_vector
+            # self.new_rotate_vector = gs_new.mplot
+
 
     def rg_array(self, arr, method='linear'):
         """
@@ -1492,8 +1499,9 @@ class Gs2Gs:
                 interpolator = CloughTocher2DInterpolator(self.tri, yr.ravel())
             # use it
             yrr = interpolator(self.mesh_new)
-            return self.new_mplot.rotate_vector(xrr, yrr,
-                                                self.new_lons, self.new_lats)
+            # return self.new_mplot.rotate_vector(xrr, yrr,
+            #                                     self.new_lons, self.new_lats)
+            return self.new_rotate_vector(xrr, yrr, self.new_lons, self.new_lats)
         else:
             print('Gs2Gs not defined for vectors, re-initialise')
 

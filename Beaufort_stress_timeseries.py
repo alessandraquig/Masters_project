@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 import parameters as par
 from sys import path
 import plotting_functions as pf
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 
 path.insert(0, par.path)
 
@@ -21,13 +26,13 @@ ymax = 257
 ymin = 217
 
 # Loading arrays
-drift = np.load(f"Data_arrays/{hemisphere}/drift_1979-2020.npy")
+# drift = np.load(f"Data_arrays/{hemisphere}/drift_1979-2020.npy")
 conc = np.load(f"Data_arrays/{hemisphere}/conc_1979-2020.npy")
-geo = np.load(f"Data_arrays/{hemisphere}/geo_1979-2020.npy")
-wind = np.load(f"Data_arrays/{hemisphere}/wind_1979-2020.npy")
-ekman = np.load(f"Data_arrays/{hemisphere}/{model}/ekman_{years[0]}-{years[-1]}.npy")
+# geo = np.load(f"Data_arrays/{hemisphere}/geo_1979-2020.npy")
+# wind = np.load(f"Data_arrays/{hemisphere}/wind_1979-2020.npy")
+# ekman = np.load(f"Data_arrays/{hemisphere}/{model}/ekman_{years[0]}-{years[-1]}.npy")
 tau = np.load(f"Data_arrays/{hemisphere}/{model}/tau_{years[0]}-{years[-1]}.npy")
-pump = np.load(f"Data_arrays/{hemisphere}/{model}/pump_{years[0]}-{years[-1]}.npy")
+# pump = np.load(f"Data_arrays/{hemisphere}/{model}/pump_{years[0]}-{years[-1]}.npy")
 
 # Getting monthly averages across the whole map
 # Drift, conc, geo, and wind are all loaded for 1979-2020 (geo is nan before 2011), so years=42
@@ -51,6 +56,9 @@ tau_v_avg = np.zeros((len(years), len(months)))
 tau_avg = np.zeros((len(years), len(months)))
 tau_a_avg = np.zeros((len(years), len(months)))
 tau_i_avg = np.zeros((len(years), len(months)))
+tau_u_max = np.zeros((len(years), len(months)))
+tau_v_max = np.zeros((len(years), len(months)))
+tau_max = np.zeros((len(years), len(months)))
 for year in range(len(years)):
     for month in range(len(months)):
         tau_a_u_avg[year, month] = np.nanmean(tau[year, month, xmin:xmax, ymin:ymax, 0, 1], axis=(0, 1))
@@ -59,12 +67,16 @@ for year in range(len(years)):
         tau_i_v_avg[year, month] = np.nanmean(tau[year, month, xmin:xmax, ymin:ymax, 1, 2], axis=(0, 1))
         tau_u_avg[year, month] = np.nanmean(tau[year, month, xmin:xmax, ymin:ymax, 0, 0], axis=(0, 1))
         tau_v_avg[year, month] = np.nanmean(tau[year, month, xmin:xmax, ymin:ymax, 1, 0], axis=(0, 1))
+        tau_u_max[year, month] = np.nanmax(tau[year, month, xmin:xmax, ymin:ymax, 0, 0], axis=(0, 1))
+        tau_v_max[year, month] = np.nanmax(tau[year, month, xmin:xmax, ymin:ymax, 1, 0], axis=(0, 1))
 
         # calculate the magnitude of the averaged Ekman current field using np.hypot
         tau_a_avg[year, month] = np.hypot(tau_a_u_avg[year, month], tau_a_v_avg[year, month])
         tau_i_avg[year, month] = np.hypot(tau_i_u_avg[year, month], tau_i_v_avg[year, month])
         tau_avg[year, month] = np.hypot(tau_u_avg[year, month], tau_v_avg[year, month])
+        tau_max[year, month] = np.hypot(tau_u_max[year, month], tau_v_max[year, month])
 
+print(np.nanmax(tau_max))
 
 # Flatten arrays so they can be plotted linearly against time
 conc_flat = conc_avg.flatten()
@@ -103,7 +115,7 @@ p2, = time_ax.plot(years_ad, tau_a_flat, label=fr"Wind Stress", c='C2')
 p3, = time_ax.plot(years_ad, tau_i_flat, label=r"Ice Stress", c='C3')
 # p4, = time_ax.plot(years_ad[-10 * 12:], geo_flat[-10 * 12:], label="Geostrophic Currents", c='C3')
 
-time_ax.set_title("Wind, Ice, and Total Stress and Ice Concentration Over Time")
+time_ax.set_title("Wind, Ice, and Total Stress and Ice Concentration Over Time", fontsize=20)
 
 time_ax.xaxis.set_major_locator(MultipleLocator(5))
 time_ax.xaxis.set_minor_locator(MultipleLocator(1))
@@ -115,7 +127,7 @@ time_ax.set_ylim(bottom=0)
 # wind_ax.yaxis.label.set_color(p3.get_color())
 # wind_ax.set_ylim(bottom=0)
 
-conc_ax.set_ylabel("Ice concentration (%)")
+conc_ax.set_ylabel("Ice concentration (\%)")
 # wind_ax.yaxis.label.set_color(p3.get_color())
 conc_ax.set_ylim(bottom=0)
 

@@ -139,35 +139,35 @@ GEmonth2GPathfinder = gs.Gs2Gs(GEmonth, GPathfinder, vectors=True, NaN_avoid=Tru
 # np.save(f"Data_arrays/{hemisphere}/drift_{years[0]}-{years[-1]}.npy", drift)
 # %%
 # Making whole concentration array
-icr_list = []
-for year_idx, year in enumerate(years):
-    # if year != 1993 and year != 1994 and year != 1995:
-    try:
-        icr = np.load(f"Data_arrays/{hemisphere}/ice_conc_icr_{year}.npy")
-        icr_list.append(icr)
-    except FileNotFoundError as exc:
-        print(f"No data for {year}: {exc}")
-        icr_empty = np.zeros((1, 12, len(GPathfinder.xpts), len(GPathfinder.ypts)))
-        icr_list.append(icr_empty)
-
-concentration = np.concatenate(icr_list, axis=0)
-np.save(f"Data_arrays/{hemisphere}/conc_{years[0]}-{years[-1]}.npy", concentration)
+# icr_list = []
+# for year_idx, year in enumerate(years):
+#     # if year != 1993 and year != 1994 and year != 1995:
+#     try:
+#         icr = np.load(f"Data_arrays/{hemisphere}/ice_conc_icr_{year}.npy")
+#         icr_list.append(icr)
+#     except FileNotFoundError as exc:
+#         print(f"No data for {year}: {exc}")
+#         icr_empty = np.zeros((1, 12, len(GPathfinder.xpts), len(GPathfinder.ypts)))
+#         icr_list.append(icr_empty)
+#
+# concentration = np.concatenate(icr_list, axis=0)
+# np.save(f"Data_arrays/{hemisphere}/conc_{years[0]}-{years[-1]}.npy", concentration)
 # #%%
 # Making whole geostrophic array
 # I've made arrays of zeros for 1979-2010. This allows me to run the code without it crashing, but keep in mind that only models not using geostrophic data work before then
-# gcr_list = []
-# for year_idx, year in enumerate(years):
-#     #if year != 1993 and year != 1994 and year != 1995:
-#     try:
-#         gcr = np.load(f"Annual_data/{hemisphere.capitalize()}/gc_uvgr_{year}.npy")
-#         gcr_list.append(gcr)
-#     except:
-#         print("No data for ",year)
-#         gcr_empty = np.zeros((1, 12, len(GPathfinder.xpts), len(GPathfinder.ypts), 2))
-#         gcr_list.append(gcr_empty)
-#
-# geostrophic = np.concatenate(gcr_list, axis=0)
-# np.save(f"Data_arrays/{hemisphere}/geo_{years[0]}-{years[-1]}.npy", geostrophic)
+gcr_list = []
+for year_idx, year in enumerate(years):
+    #if year != 1993 and year != 1994 and year != 1995:
+    try:
+        gcr = np.load(f"Annual_data/{hemisphere.capitalize()}/gc_uvgr_{year}.npy")
+        gcr_list.append(gcr)
+    except:
+        print("No data for ",year)
+        gcr_empty = np.zeros((1, 12, len(GPathfinder.xpts), len(GPathfinder.ypts), 2))
+        gcr_list.append(gcr_empty)
+
+geostrophic = np.concatenate(gcr_list, axis=0)
+np.save(f"Data_arrays/{hemisphere}/geo_{years[0]}-{years[-1]}.npy", geostrophic)
 # #%%
 # #Making whole wind array
 # windr_list = []

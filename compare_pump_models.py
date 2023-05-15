@@ -1,12 +1,17 @@
 # %%
 import numpy as np
 import matplotlib
+from matplotlib.colorbar import Colorbar
 from matplotlib.colors import Normalize
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import CenteredNorm
-
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 plt.rcParams['figure.dpi'] = 400
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -18,6 +23,11 @@ path.insert(0, par.path)
 import grid_set as gs
 import data_classes as dc
 import plotting_functions as pf
+# this_rc_params = {
+#     "text.usetex": True,
+#     "font.family": "roman"
+# }
+# plt.rcParams.update(this_rc_params)
 
 hemisphere = par.HEMI
 years = np.arange(2011, 2020 + 1)
@@ -69,7 +79,7 @@ pump_all_sep = pf.mask_data(pf.get_average(pump_all[..., 3], 2011, years=years, 
 pump_wind_sep = pf.mask_data(pf.get_average(pump_wind[..., 3], 1979, years=years, months=["sep"]))
 pump_wind_ice_sep = pf.mask_data(pf.get_average(pump_wind_ice[..., 3], 1979, years=years, months=["sep"]))
 
-fig_pump: plt.Figure = plt.figure(figsize=(10, 12))
+fig_pump: plt.Figure = plt.figure(figsize=(8, 10))
 fig_pump.suptitle("Ekman Pumping 2011-2020 Mean", fontsize=15)
 
 #
@@ -88,10 +98,13 @@ ax_wind_ice_sep, _ = pf.colorplot(pump_wind_ice_sep, fig_pump, "September Wind a
                                   norm=norm)
 ax_wind_sep, _ = pf.colorplot(pump_wind_sep, fig_pump, "September Wind", 3, 3, 9, cmap="seismic", norm=norm)
 
-fig_pump.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_wind, ax_mar, ax_wind_ice_mar,
-                                 ax_wind_mar, ax_wind_sep, ax_wind_ice_sep],
+cax = fig_pump.add_axes([0.05, 0.05, 0.9, 0.04])
+cbar: Colorbar = fig_pump.colorbar(img_total, cax=cax,
                   orientation="horizontal", pad=0.05, aspect=25)
-fig_pump.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+cbar.set_label("Ekman Pumping (m/yr)")
+fig_pump.subplots_adjust(left=0.01, right=0.99, wspace=0.01, top=0.9, bottom=0.1)
+# ax=[ax_total, ax_wind_ice, ax_wind, ax_mar, ax_wind_ice_mar,
+#                                  ax_wind_mar, ax_wind_sep, ax_wind_ice_sep]
 
 # Are all of the subplots using the same colorbar, or have I only printed it for one?
 

@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib
+import numpy as np
 from scipy.ndimage import gaussian_filter1d
 
 matplotlib.use('Agg')
@@ -43,6 +43,7 @@ GEO = dc.CPOM_geo(f'{par.path}CPOM_geo/')
 GCPOM = gs.grid_set(m)
 GCPOM.load_grid(par.GC_grid)
 GCPOM2GPathfinder = gs.Gs2Gs(GCPOM, GPathfinder, vectors=True)
+GCPOM2Gplot = gs.Gs2Gs(GCPOM, Gplot, vectors=True)
 
 # winds
 MWinds = dc.ERA5_months(f'{par.path}ERA5/')
@@ -127,6 +128,84 @@ def colorplot(data, fig, title, rows=1, cols=1, pos=1, cmap="PiYG", norm=None):
 
 
 def vectorplot(data, fig, title, rows=1, cols=1, pos=1, cmap="PiYG", arrow_every=10, norm=None):
+    """
+    This will plot a variable with vectors
+    Works for drift, wind, geo, or ekman
+
+    :param data: This is either an unprocessed data array (drift, conc, geo, wind, ekman[..., 0], or pump[..., 3])
+    or an average calculated in get_average
+    :param fig: Define a figure before you call this function. This is so you can use this function to
+    call subplots in case you're plotting several things
+    :param rows: How many rows of subplots in your figure (default is 1)
+    :param cols: How many columns of subplots in your figure (default is 1)
+    :param pos: The position of this subplot within your figure (default is 1)
+    :param title: Title of this subplot (not the whole figure - define that outside)
+    :param cmap: Colormap - default is an ugly one so I remember to change it for each variable
+    :return: Returns the axis to be plotted
+    """
+
+    # calculate the magnitude of the averaged Ekman current field using np.hypot
+    ur_avg, vr_avg = data[..., 0], data[..., 1]
+    mag = np.hypot(ur_avg, vr_avg)
+
+    # plot the magnitude of the averaged Ekman current field
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=m)
+    ax.set_extent(bounds, ccrs.PlateCarree())
+    img = ax.contourf(GPathfinder.xpts, GPathfinder.ypts, mag, cmap=cmap)
+
+    if par.HEMI == "north":
+        ax.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
+                  GPathfinder.ypts[::arrow_every, ::arrow_every],
+                  ur_avg[::arrow_every, ::arrow_every],
+                  vr_avg[::arrow_every, ::arrow_every], color="k")
+
+    if par.HEMI == "south":
+        ax.quiver(Gplot.xpts, Gplot.ypts,
+                  *GPathfinder2Gplot.rg_vecs_to_plot(ur_avg, vr_avg),
+                  color="k")
+    ax.add_feature(cfeature.COASTLINE)
+    ax.set_title(title)
+    return ax, img
+
+
+def vectorplot2(data1, data2, fig, title, rows=1, cols=1, pos=1, cmap="PiYG", arrow_every=10, norm=None):
+    """
+    This will plot a variable with vectors
+    Works for drift, wind, geo, or ekman
+
+    :param data: This is either an unprocessed data array (drift, conc, geo, wind, ekman[..., 0], or pump[..., 3])
+    or an average calculated in get_average
+    :param fig: Define a figure before you call this function. This is so you can use this function to
+    call subplots in case you're plotting several things
+    :param rows: How many rows of subplots in your figure (default is 1)
+    :param cols: How many columns of subplots in your figure (default is 1)
+    :param pos: The position of this subplot within your figure (default is 1)
+    :param title: Title of this subplot (not the whole figure - define that outside)
+    :param cmap: Colormap - default is an ugly one so I remember to change it for each variable
+    :return: Returns the axis to be plotted
+    """
+
+    # calculate the magnitude of the averaged Ekman current field using np.hypot
+    ur_avg = data1
+    vr_avg = data2
+
+    mag = np.hypot(ur_avg, vr_avg)
+
+    # plot the magnitude of the averaged Ekman current field
+    ax: plt.Axes = fig.add_subplot(rows, cols, pos, projection=m)
+    ax.set_extent(bounds, ccrs.PlateCarree())
+    img = ax.contourf(GCPOM.xpts[::arrow_every, ::arrow_every], GCPOM.ypts[::arrow_every, ::arrow_every],
+                      mag[::arrow_every, ::arrow_every], cmap=cmap)
+    ax.quiver(GCPOM.xpts[::arrow_every, ::arrow_every],
+              GCPOM.ypts[::arrow_every, ::arrow_every],
+              ur_avg[::arrow_every, ::arrow_every],
+              vr_avg[::arrow_every, ::arrow_every], color="k")
+    ax.add_feature(cfeature.COASTLINE)
+    ax.set_title(title)
+    return ax, img
+
+
+def vectorplot_old(data, fig, title, rows=1, cols=1, pos=1, cmap="PiYG", arrow_every=10, norm=None):
     """
     This will plot a variable with vectors
     Works for drift, wind, geo, or ekman

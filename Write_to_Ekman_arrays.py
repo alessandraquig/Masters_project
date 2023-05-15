@@ -18,7 +18,7 @@ import data_classes as dc
 years = par.YEARS
 months = par.MONTHS
 # model = par.MODEL
-models = ["model1", "model2", "model3", "model4", "model5", "model6", "model7"]
+models = ["model1", "model2", "model4", "model5", "model6"]
 
 ### GPLOT SET UP
 f = plt.figure()
@@ -92,6 +92,8 @@ for i in range(len(models)):
     drift = np.load(f"Data_arrays/{par.HEMI}/drift_1979-2020.npy")
     conc = np.load(f"Data_arrays/{par.HEMI}/conc_1979-2020.npy")
     geo = np.load(f"Data_arrays/{par.HEMI}/geo_1979-2020.npy")
+    geo[..., 0] *= -1
+    geo[..., 1] *= -1
     wind = np.load(f"Data_arrays/{par.HEMI}/wind_1979-2020.npy")
 
     land_mask = np.isfinite(geo[-1, -1, :, :, 0]) & np.isfinite(geo[-1, -1, :, :, 1])

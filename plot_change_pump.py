@@ -1,9 +1,14 @@
 import numpy as np
 import matplotlib
 from matplotlib.colors import CenteredNorm
+import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.dpi'] = 400
 import matplotlib.pyplot as plt
@@ -75,6 +80,7 @@ pump_80s = pf.get_average(pump[..., 3], 1979, np.arange(1980, 1989 + 1))
 pump_10s = pf.get_average(pump[..., 3], 1979, np.arange(2010, 2019 + 1))
 pump_change = pump_10s - pump_80s
 pump_change = pf.mask_data(pump_change)
+print(f"Average pump change = {np.nanmean(pump_change)}")
 
 pump_80s_sep = pf.get_average(pump[..., 3], 1979, np.arange(1980, 1989 + 1), months=["sep"])
 pump_10s_sep = pf.get_average(pump[..., 3], 1979, np.arange(2010, 2019 + 1), months=["sep"])
@@ -87,14 +93,16 @@ pump_change_mar = pump_10s_mar - pump_80s_mar
 pump_change_mar = pf.mask_data(pump_change_mar)
 
 pump_norm = CenteredNorm(halfrange=25, vcenter=0)
+cmap = "coolwarm"
 fig_pump = plt.figure(figsize=(18, 9))
 fig_pump.suptitle("Change in Average Pumping 1980s-2010s", fontsize=15)
-ax_pump, img_pump = pf.colorplot(data=pump_change, fig=fig_pump, rows=1, cols=3, pos=1, title="Whole Year", norm=pump_norm)
-ax_pump_sep, _ = pf.colorplot(data=pump_change_sep, fig=fig_pump, rows=1, cols=3, pos=2, title="September", norm=pump_norm)
-ax_pump_mar, _ = pf.colorplot(data=pump_change_mar, fig=fig_pump, rows=1, cols=3, pos=3, title="March", norm=pump_norm)
+ax_pump, img_pump = pf.colorplot(data=pump_change, fig=fig_pump, rows=1, cols=3, pos=1, title="Whole Year", norm=pump_norm, cmap=cmap)
+ax_pump_sep, _ = pf.colorplot(data=pump_change_sep, fig=fig_pump, rows=1, cols=3, pos=2, title="September", norm=pump_norm, cmap=cmap)
+ax_pump_mar, _ = pf.colorplot(data=pump_change_mar, fig=fig_pump, rows=1, cols=3, pos=3, title="March", norm=pump_norm, cmap=cmap)
 
-fig_pump.colorbar(img_pump, ax=[ax_pump, ax_pump_sep, ax_pump_mar], orientation="horizontal",
+cbar = fig_pump.colorbar(img_pump, ax=[ax_pump, ax_pump_sep, ax_pump_mar], orientation="horizontal",
                   pad=0.05, aspect=25, norm=pump_norm)
-fig_pump.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+cbar.set_label("Change in Pumping (m yr$^{-1}$)")
+fig_pump.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.9, bottom=0.3)
 
-fig_pump.savefig(f"Maps_output/{hemisphere}/{model}/Pump_change_seasons.png")
+fig_pump.savefig(f"Maps_output/{hemisphere}/Pump_change_seasons.png")
