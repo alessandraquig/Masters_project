@@ -22,7 +22,7 @@ this_rc_params = {
 plt.rcParams.update(this_rc_params)
 
 hemisphere = par.HEMI
-years = np.arange(2011, 2020+1)
+years = 2020
 models = ["model1", "model2", "model3", "model4", "model5", "model6", "model7"]
 months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
@@ -60,10 +60,19 @@ total = ek_all[..., 0] + geo[-10:, ...]
 
 # Getting averages over 2011-2020
 ek_all_avg = pf.mask_data(pf.get_average(ek_all[..., 0], 2011, years=years))
-# ek_geo_avg = pf.mask_data(pf.get_average(ek_geo[..., 0], 2011, years=years))
 ek_wind_ice_avg = pf.mask_data(pf.get_average(ek_wind_ice[..., 0], 1979, years=years))
 geo_avg = pf.mask_data(pf.get_average(geo, 1979, years=years))
 total_avg = pf.mask_data(pf.get_average(total, 2011, years=years))
+
+ek_all_avg_sep = pf.mask_data(pf.get_average(ek_all[..., 0], 2011, years=years, months=["sep"]))
+ek_wind_ice_avg_sep = pf.mask_data(pf.get_average(ek_wind_ice[..., 0], 1979, years=years, months=["sep"]))
+geo_avg_sep = pf.mask_data(pf.get_average(geo, 1979, years=years, months=["sep"]))
+total_avg_sep = pf.mask_data(pf.get_average(total, 2011, years=years, months=["sep"]))
+
+ek_all_avg_mar = pf.mask_data(pf.get_average(ek_all[..., 0], 2011, years=years, months=["mar"]))
+ek_wind_ice_avg_mar = pf.mask_data(pf.get_average(ek_wind_ice[..., 0], 1979, years=years, months=["mar"]))
+geo_avg_mar = pf.mask_data(pf.get_average(geo, 1979, years=years, months=["mar"]))
+total_avg_mar = pf.mask_data(pf.get_average(total, 2011, years=years, months=["mar"]))
 
 jfm = ["jan", "feb", "mar"]
 amj = ["apr", "may", "jun"]
@@ -71,26 +80,32 @@ jas = ["jul", "aug", "sep"]
 ond = ["oct", "nov", "dec"]
 seasons = [jfm, amj, jas, ond]
 
-fig_ek: plt.Figure = plt.figure(figsize=(9, 4))
+fig_ek: plt.Figure = plt.figure(figsize=(9, 12))
 fig_ek.suptitle("Mean Surface Currents 2011-2020", fontsize=15)
 
 #
 # TODO: give them all the same norm
 v_max = max(np.max(ek_all_avg), np.max(geo_avg), np.max(ek_wind_ice_avg), np.max(total_avg))
 norm = Normalize(vmin=0, vmax=v_max)
-ax_total, img_total = pf.vectorplot(total_avg, fig_ek, "Total", 1, 4, 1, cmap="viridis", norm=norm)
-ax_ek, _ = pf.vectorplot(ek_all_avg, fig_ek, "Ekman", 1, 4, 2, cmap="viridis", norm=norm)
-ax_wind_ice, _ = pf.vectorplot(ek_wind_ice_avg, fig_ek, "Ekman (No Geostrophic)", 1, 4, 3, cmap="viridis", norm=norm)
-ax_geo, _ = pf.vectorplot(geo_avg, fig_ek, "Geostrophic", 1, 4, 4, cmap="viridis", norm=norm)
+ax_total, img_total = pf.vectorplot(total_avg, fig_ek, "Total", 4, 3, 1, cmap="viridis", norm=norm)
+ax_ek, _ = pf.vectorplot(ek_all_avg, fig_ek, "Ekman", 4, 3, 4, cmap="viridis", norm=norm)
+ax_wind_ice, _ = pf.vectorplot(ek_wind_ice_avg, fig_ek, "Ekman (No Geostrophic)", 4, 3, 7, cmap="viridis", norm=norm)
+ax_geo, _ = pf.vectorplot(geo_avg, fig_ek, "Geostrophic", 4, 3, 10, cmap="viridis", norm=norm)
+
+ax_total_sep, img_total_sep = pf.vectorplot(total_avg_sep, fig_ek, "Total September", 4, 3, 2, cmap="viridis", norm=norm)
+ax_ek_sep, _ = pf.vectorplot(ek_all_avg_sep, fig_ek, "Ekman September", 4, 3, 5, cmap="viridis", norm=norm)
+ax_wind_ice_sep, _ = pf.vectorplot(ek_wind_ice_avg_sep, fig_ek, "Ekman (No Geo) September", 4, 3, 8, cmap="viridis", norm=norm)
+ax_geo_sep, _ = pf.vectorplot(geo_avg_sep, fig_ek, "Geostrophic September", 4, 3, 11, cmap="viridis", norm=norm)
+
+ax_total_mar, img_total_mar = pf.vectorplot(total_avg_mar, fig_ek, "Total March", 4, 3, 3, cmap="viridis", norm=norm)
+ax_ek_mar, _ = pf.vectorplot(ek_all_avg_mar, fig_ek, "Ekman March", 4, 3, 6, cmap="viridis", norm=norm)
+ax_wind_ice_mar, _ = pf.vectorplot(ek_wind_ice_avg_mar, fig_ek, "Ekman (No Geo) March", 4, 3, 9, cmap="viridis", norm=norm)
+ax_geo_mar, _ = pf.vectorplot(geo_avg_mar, fig_ek, "Geostrophic March", 4, 3, 12, cmap="viridis", norm=norm)
 
 cbar = fig_ek.colorbar(img_total, ax=[ax_total, ax_wind_ice, ax_geo, ax_ek], orientation="horizontal",
                 pad=0.05, aspect=25)
 cbar.set_label("Currents (m$^{3}$ s$^{-1}$)")
 
 fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.9, bottom=0.3)
-
-
-#Are all of the subplots using the same colorbar, or have I only printed it for one?
-
-fig_ek.savefig(f"Maps_output/{hemisphere}/compare_ek_models.png")
+fig_ek.savefig(f"Maps_output/{hemisphere}/compare_ek_models_2020.png")
 #fig_pump.savefig(f"Maps_output/{hemisphere}/{model}/Pump_Geo_2011-2020.png")

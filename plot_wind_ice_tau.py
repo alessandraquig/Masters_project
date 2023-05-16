@@ -1,11 +1,16 @@
 import numpy as np
 import matplotlib
+import matplotlib.pyplot as plt
 
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.dpi'] = 400
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 
 import plotting_functions as pf
-import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import grid_set as gs
@@ -95,13 +100,13 @@ taua_u, taua_v = taua_avg[..., 0], taua_avg[..., 1]
 ax_taua = ax_conc.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           taua_u[::arrow_every, ::arrow_every],
-          taua_v[::arrow_every, ::arrow_every], color="r")
+          taua_v[::arrow_every, ::arrow_every], color="r", label="Wind Stress (Pa)")
 
 taui_u, taui_v = taui_avg[..., 0], taui_avg[..., 1]
 ax_taui = ax_conc.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           taui_u[::arrow_every, ::arrow_every],
-          taui_v[::arrow_every, ::arrow_every], color="k")
+          taui_v[::arrow_every, ::arrow_every], color="k", label="Ice Stress (Pa)")
 
 # March
 ax_conc_mar, img_conc_mar = pf.colorplot(conc_avg_mar, fig_stress, "March", 1, 3, 2, cmap="Blues")
@@ -132,8 +137,10 @@ ax_taui_sep = ax_conc_sep.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
                                  taui_v_sep[::arrow_every, ::arrow_every], color="k")
 
 
-fig_stress.colorbar(img_conc, ax=[ax_conc, ax_conc_mar, ax_conc_sep], orientation="horizontal",
+cbar = fig_stress.colorbar(img_conc, ax=[ax_conc, ax_conc_mar, ax_conc_sep], orientation="horizontal",
                 pad=0.05, aspect=25)
 fig_stress.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+ax_conc.legend(handles=[ax_taua, ax_taui], loc="upper left")
+cbar.set_label("Ice Concentration")
 
 fig_stress.savefig(f"Maps_output/{hemisphere}/Ice_and_wind_stress_seasons.png")

@@ -143,3 +143,35 @@ if __name__ == '__main__':
     ice_2010s = get_ice_area(pf.get_average(conc, 1979, years=np.arange(2010, 2019+1)))
 
 #%%
+# Setting grid squares for Beaufort Gyre (taken from Olivia's code - talk to Michel)
+xmax = 180
+xmin = 125
+ymax = 257
+ymin = 217
+
+pump_80s = pf.get_average(pump[..., xmin:xmax, ymin:ymax, 3], 1979, years=np.arange(1980, 1989+1))
+pump_80s_avg = np.nanmean(pump_80s)
+pump_10s = pf.get_average(pump[..., xmin:xmax, ymin:ymax, 3], 1979, years=np.arange(2010, 2019+1))
+pump_10s_avg = np.nanmean(pump_10s)
+pump_change = pump_10s - pump_80s
+pump_change_avg = np.nanmean(pump_change)
+
+pump1 = np.load(f"Data_arrays/north/model1/pump_2011-2020.npy")
+avg_pump_mag = np.nanmean(pf.get_average(pump1[..., xmin:xmax, ymin:ymax, 3], 2011, years=np.arange(2011, 2020)))
+
+pump4 = np.load(f"Data_arrays/north/model4/pump_2011-2020.npy")
+avg_pump_no_ice = np.nanmean(pf.get_average(pump4[..., xmin:xmax, ymin:ymax, 3], 2011, years=np.arange(2011, 2020)))
+print(f"No ice pumping = {avg_pump_no_ice}")
+
+# ekman = np.load(f"Data_arrays/north/model7/ekman_1979-2020.npy")
+# ekman_80s = pf.get_average(ekman[..., xmin:xmax, ymin:ymax, ..., 0], 1979, years=np.arange(1980, 1989+1))
+# ekman_80s_avg = np.nanmean(ekman_80s)
+# ekman_10s = pf.get_average(ekman[..., xmin:xmax, ymin:ymax, ..., 0], 1979, years=np.arange(2010, 2019+1))
+# ekman_10s_avg = np.nanmean(ekman_10s)
+# ekman_change = ekman_10s - ekman_80s
+# ekman_change_avg = np.nanmean(ekman_change)
+
+wind = np.abs(np.load(f"Data_arrays/north/wind_1979-2020.npy"))
+winter_wind = np.nanmean(pf.get_average(wind[..., xmin:xmax, ymin:ymax, :], 1979, months=["sep", "oct", "nov", "dec", "jan", "feb"]))
+summer_wind = np.nanmean(pf.get_average(wind[..., xmin:xmax, ymin:ymax, :], 1979, months=["mar", "apr", "may", "jun", "jul", "aug"]))
+print(f"Winter wind = {winter_wind}, summer wind = {summer_wind}")

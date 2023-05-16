@@ -225,9 +225,9 @@ for s_idx, season in enumerate(seasons):
                                     cols=4, pos=(s_idx + 1), cmap="viridis")
     axes_total.append(ax_total)
 
-fig_geo.colorbar(img_geo, ax=axes_geo, orientation="horizontal",
+cbar_geo = fig_geo.colorbar(img_geo, ax=axes_geo, orientation="horizontal",
                  pad=0.05, aspect=25)
-fig_geo.set_label("Geostrophic Current Velocity (m s$^{-1}$)")
+cbar_geo.set_label("Geostrophic Current Velocity (m s$^{-1}$)")
 fig_geo.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.9, bottom=0.25)
 
 fig_total.colorbar(img_total, ax=axes_total, orientation="horizontal",

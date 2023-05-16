@@ -1,11 +1,17 @@
 import numpy as np
 import matplotlib
 from matplotlib.colors import CenteredNorm
+import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.dpi'] = 400
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 import matplotlib.pyplot as plt
 from sys import path
 import parameters as par
@@ -90,7 +96,7 @@ arrow_every = 10
 ax_ek: plt.Axes = fig_ek.add_subplot(1, 3, 1, projection=par.m)
 ax_ek.set_extent(bounds, ccrs.PlateCarree())
 img_ek = ax_ek.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
-                        cmap="PiYG", norm=ek_norm, levels=ek_levels)
+                        cmap="PRGn", norm=ek_norm, levels=ek_levels)
 ax_ek.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
           GPathfinder.ypts[::arrow_every, ::arrow_every],
           ur_avg[::arrow_every, ::arrow_every],
@@ -114,7 +120,7 @@ vr_avg_sep = ek_change_sep[..., 1]
 ax_ek_sep: plt.Axes = fig_ek.add_subplot(1, 3, 2, projection=par.m)
 ax_ek_sep.set_extent(bounds, ccrs.PlateCarree())
 img_ek_sep = ax_ek_sep.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
-                                cmap="PiYG", norm=ek_norm, levels=ek_levels)
+                                cmap="PRGn", norm=ek_norm, levels=ek_levels)
 ax_ek_sep.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
              GPathfinder.ypts[::arrow_every, ::arrow_every],
              ur_avg_sep[::arrow_every, ::arrow_every],
@@ -138,7 +144,7 @@ vr_avg_mar = ek_change_mar[..., 1]
 ax_ek_mar: plt.Axes = fig_ek.add_subplot(1, 3, 3, projection=par.m)
 ax_ek_mar.set_extent(bounds, ccrs.PlateCarree())
 img_ek_mar = ax_ek_mar.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_change,
-                                cmap="PiYG", norm=ek_norm, levels=ek_levels)
+                                cmap="PRGn", norm=ek_norm, levels=ek_levels)
 ax_ek_mar.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
                  GPathfinder.ypts[::arrow_every, ::arrow_every],
                  ur_avg_mar[::arrow_every, ::arrow_every],
@@ -148,9 +154,10 @@ ax_ek_mar.set_title("March")
 
 print(f"Max change = {np.nanmax(ek_change_mar)}, min change = {np.nanmin(ek_change_mar)}")
 
-fig_ek.colorbar(img_ek, ax=[ax_ek, ax_ek_sep, ax_ek_mar], orientation="horizontal",
+cbar = fig_ek.colorbar(img_ek, ax=[ax_ek, ax_ek_sep, ax_ek_mar], orientation="horizontal",
                 pad=0.05, aspect=25, norm=ek_norm)
 fig_ek.subplots_adjust(left=0.01, right=0.99, wspace=0.05, top=0.85, bottom=0.25)
+cbar.set_label("Change in Ekman Currents (m s$^{-1}$)")
 fig_ek.savefig(f"Maps_output/{hemisphere}/{model}/Currents_change_seasons.png")
 
 ek_comp = ek_change_mar - ek_change_sep
@@ -163,7 +170,7 @@ fig_comp = plt.figure(figsize=(18, 9))
 fig_comp.suptitle("Comparing March and September")
 ax_comp: plt.Axes = fig_comp.add_subplot(1, 1, 1, projection=par.m)
 ax_comp.set_extent(bounds, ccrs.PlateCarree())
-img_comp = ax_comp.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_comp, cmap="PiYG")
+img_comp = ax_comp.contourf(GPathfinder.xpts, GPathfinder.ypts, mag_comp, cmap="PRGn")
 ax_comp.quiver(GPathfinder.xpts[::arrow_every, ::arrow_every],
                  GPathfinder.ypts[::arrow_every, ::arrow_every],
                  u_comp[::arrow_every, ::arrow_every],
@@ -175,4 +182,5 @@ fig_comp.colorbar(img_comp, ax=[ax_comp], orientation="vertical",
                 pad=0.05, aspect=25, norm=comp_norm)
 fig_comp.savefig(f"Maps_output/{hemisphere}/{model}/Currents_change_between_seasons.png")
 
-print(f"All close is {np.allclose(ek_change_mar, ek_change_sep, equal_nan=True)}")
+print(f"np.allclose(ek_change_mar, ek_change_sep, equal_nan=True)={np.allclose(ek_change_mar, ek_change_sep, equal_nan=True)}\n"
+      f"(Should be FALSE)")

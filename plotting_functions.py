@@ -5,6 +5,12 @@ from scipy.ndimage import gaussian_filter1d
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
+plt.rcParams['figure.dpi'] = 400
+this_rc_params = {
+    "text.usetex": True,
+    "font.family": "roman"
+}
+plt.rcParams.update(this_rc_params)
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from sys import path
